@@ -6,7 +6,7 @@
  * @flow strict-local
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
     Alert,
     Button,
@@ -19,9 +19,22 @@ import Auth0 from 'react-native-auth0';
 var credentials = require('./auth0-configuration');
 const auth0 = new Auth0(credentials);
 
-const App = () => {
+const App = (props) => {
 
     let [accessToken, setAccessToken] = useState(null);
+    const extraText = props && props['android.intent.extra.TEXT'];
+
+    useEffect(() => {
+        if (extraText && !loggedIn) {
+            onLogin()
+        }
+    }, [extraText, loggedIn, onLogin])
+
+    useEffect(() => {
+        if (extraText && loggedIn) {
+            console.log('Logged in - extraText:', extraText)
+        }
+    }, [extraText, loggedIn])
 
     const onLogin = () => {
         auth0.webAuth
